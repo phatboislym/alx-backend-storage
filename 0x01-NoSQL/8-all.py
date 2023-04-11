@@ -10,10 +10,10 @@ returns a list of all documents in a collection
 
 def list_all(mongo_collection):
     """
-    args: mongo_collection: pymongo.cursor.Cursor object
+    args: mongo_collection: pymongo.collection.Collection object
     return: collection: list
     """
     collection = []
-    for mongo in mongo_collection:
+    for mongo in mongo_collection.find():
         collection.append(mongo)
     return (collection)
