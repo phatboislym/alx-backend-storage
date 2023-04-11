@@ -7,3 +7,4 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/phatboislym/alx-backend-storage)
 
 - [0x00. MySQL advanced](0x00-MySQL_Advanced)
+- [0x01. NoSQL](0x01-NoSQL)
