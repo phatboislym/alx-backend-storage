@@ -3,10 +3,13 @@
 """
 module containing the following objects:
     1. class `Cache`
+    2. method `get`
+    3. method `get_int`
+    4. method `get_str`
 """
 
 import redis
-from typing import Union
+from typing import Callable, Optional, Union
 from uuid import uuid4
 
 
@@ -28,9 +31,44 @@ class Cache():
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         generates a random key using `uuid` and stores the input data in Redis
-        args: data: Union[str, bytes, int, float])
+        args:   data: Union[str, bytes, int, float])
         return: key: str
         """
         random_key: str = str(uuid4())
         self._redis.set(random_key, data)
         return (random_key)
+
+    def get(self, key: str, fn: Optional[Callable]
+            = None) -> Union[str, bytes, int, float, None]:
+        """
+        converts data to the desired format
+        args:   key: str
+                fn: Optional[Callable]
+        return: value: Union[str, bytes, int, float, None]
+        """
+        value = self._redis.get(key)
+        if (value):
+            if (fn):
+                value = fn(value)
+            return (value)
+        else:
+            return (None)
+
+    def get_str(self, value: bytes) -> str:
+        """
+        parametrizes Cache.get with the correct conversion function
+        args:   value: bytes
+        return: value_str: str
+        """
+        value_str: str = value.decode('utf-8')
+        return (value_str)
+
+    def get_int(self, value: bytes) -> int:
+        """
+        parametrizes Cache.get with the correct conversion function
+        args:   value: bytes
+        return: value_int: int
+
+        """
+        value_int: int = int(value.decode('utf-8'))
+        return (value_int)
