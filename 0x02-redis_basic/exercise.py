@@ -6,7 +6,7 @@ module containing the following objects:
 """
 
 import redis
-import typing
+from typing import Union
 from uuid import uuid4
 
 
@@ -25,7 +25,7 @@ class Cache():
         self._redis = redis.Redis()
         self._redis.flushdb()
 
-    def store(self, data: typing.Union[bytes, float, int, str]) -> str:
+    def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         generates a random key using `uuid` and stores the input data in Redis
         args: data: Union[str, bytes, int, float])
