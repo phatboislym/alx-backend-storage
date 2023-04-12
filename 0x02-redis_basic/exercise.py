@@ -7,7 +7,7 @@ module containing the following objects:
 
 import redis
 from typing import Union
-from uuid import uuid4
+import uuid
 
 
 class Cache():
@@ -31,6 +31,6 @@ class Cache():
         args: data: Union[str, bytes, int, float])
         return: key: str
         """
-        random_key: str = str(uuid4())
+        random_key: str = str(uuid.uuid4())
         self._redis.set(random_key, data)
         return (random_key)
