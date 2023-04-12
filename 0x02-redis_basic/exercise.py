@@ -5,7 +5,7 @@ module containing the following objects:
     1. class `Cache`
 """
 
-from redis import Redis
+import redis
 from typing import Union
 from uuid import uuid4
 
@@ -17,12 +17,12 @@ class Cache():
         store
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         stores an instance of the Redis client as private variable `_redis`
         flushs the instance using flushdb
         """
-        self._redis = Redis()
+        self._redis = redis.Redis()
         self._redis.flushdb()
 
     def store(self, data: Union[bytes, float, int, str]) -> str:
