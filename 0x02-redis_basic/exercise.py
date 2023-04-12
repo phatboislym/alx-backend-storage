@@ -6,11 +6,30 @@ module containing the following objects:
     2. method `get`
     3. method `get_int`
     4. method `get_str`
+    5. function `count calls`
 """
 
 import redis
-from typing import Callable, Optional, Union
+from functools import wraps
+from typing import Any, Callable, Optional, Union
 from uuid import uuid4
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    creates and returns a function that increments the count for that key
+    every time the method is called and returns the value returned by
+    the original method
+    args:   method: Callable
+    return: count_calls_wrapper: Callable
+    """
+    @wraps(method)
+    def count_calls_wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        key: str = method.__qualname__
+        self._redis.incr(key)
+        wrap = method(self, *args, **kwargs)
+        return (wrap)
+    return count_calls_wrapper
 
 
 class Cache():
@@ -18,6 +37,9 @@ class Cache():
     methods:
         __self__
         store
+        get
+        get_int
+        get_str
     """
 
     def __init__(self) -> None:
@@ -28,6 +50,7 @@ class Cache():
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         generates a random key using `uuid` and stores the input data in Redis
@@ -54,6 +77,15 @@ class Cache():
         else:
             return (None)
 
+    def get_int(self, value: bytes) -> int:
+        """
+        parametrizes Cache.get with the correct conversion function
+        args:   value: bytes
+        return: value_int: int
+        """
+        value_int: int = int(value.decode('utf-8'))
+        return (value_int)
+
     def get_str(self, value: bytes) -> str:
         """
         parametrizes Cache.get with the correct conversion function
@@ -62,13 +94,3 @@ class Cache():
         """
         value_str: str = value.decode('utf-8')
         return (value_str)
-
-    def get_int(self, value: bytes) -> int:
-        """
-        parametrizes Cache.get with the correct conversion function
-        args:   value: bytes
-        return: value_int: int
-
-        """
-        value_int: int = int(value.decode('utf-8'))
-        return (value_int)
