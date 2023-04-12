@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 module for a Python function `update_topics` 
 changes all topics of a school document based on the name
@@ -9,4 +11,10 @@ return: None
 
 
 def update_topics(mongo_collection, name, topics):
+    """
+    args:   mongo_collection: pymongo.collection.Collection object
+            name: str
+            topics: list[str] 
+    return: None
+    """
     mongo_collection.update_many({'name': name}, {'$set': {'topics': topics}})
