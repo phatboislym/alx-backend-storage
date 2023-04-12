@@ -3,10 +3,8 @@
 """
 module containing the following objects:
     1. class `Cache`
-    2. method `get`
-    3. method `get_int`
-    4. method `get_str`
-    5. function `count calls`
+    2. function `count calls`
+    3. function `call_history`
 """
 
 import redis
