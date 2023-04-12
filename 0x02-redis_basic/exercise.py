@@ -18,8 +18,8 @@ from uuid import uuid4
 def count_calls(method: Callable) -> Callable:
     """
     creates and returns a function that increments the count for that key
-    every time the method is called and returns the value returned by
-    the original method
+        every time the method is called and returns the value returned by
+        the original method
     args:   method: Callable
     return: count_calls_wrapper: Callable
     """
@@ -30,6 +30,26 @@ def count_calls(method: Callable) -> Callable:
         wrap = method(self, *args, **kwargs)
         return (wrap)
     return count_calls_wrapper
+
+
+def call_history(method: Callable) -> Callable:
+    """
+    store the history of inputs and outputs for a particular function
+        everytime the original function is called, it adds the input parameters
+        to one list in redis, and store its output into another list
+    args:   method: Callable
+    return: count_calls_wrapper: Callable
+    """
+    @wraps(method)
+    def call_history_wrapper(self: Any, *args: Any, **kwargs: Any) -> Any:
+        key: str = method.__qualname__
+        input_key: str = f"{key}:inputs"
+        output_key: str = f"{key}:outputs"
+        self._redis.rpush(input_key, str(args))
+        history = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, str(history))
+        return (history)
+    return (call_history_wrapper)
 
 
 class Cache():
@@ -51,6 +71,7 @@ class Cache():
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         generates a random key using `uuid` and stores the input data in Redis
