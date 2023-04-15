@@ -1,6 +1,7 @@
 # 0x01. NoSQL
 
 ## Mandatory Tasks
+
 - [0. List all databases](0-list_databases)
 - [1. Create a database](1-use_or_create_database)
 - [2. Insert document](2-insert)
